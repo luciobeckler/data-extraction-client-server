@@ -25,7 +25,7 @@ while True:
             operacao = connectionSocket.recv(1024)
             if not operacao: break
             print(operacao)
-            idNumber = connectionSocket.recv(1024)
+            idNumber = int(connectionSocket.recv(1024))
             if not idNumber: break
             print(idNumber)
 
