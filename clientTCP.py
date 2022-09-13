@@ -34,7 +34,7 @@ def userRequest(): #Função responsável por adquirir os parâmetros que o usu�
             column = input('Qual coluna deseja consultar:')
             while ((column!='NAME') and (column!='CPF')): column = input('Selecione uma coluna válida:')
 
-            idNumber = input('Para qual ID deseja realizar a consulta? \n Insira um valor inteiro:')
+            idNumber = input('Para qual ID deseja realizar a consulta? \n Insira um valor inteiro maior ou igual a 0:')
 
             print(column, idNumber)
             sendToServer(column, idNumber)

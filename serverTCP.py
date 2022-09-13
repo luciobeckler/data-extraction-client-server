@@ -18,10 +18,14 @@ serverSocket.bind((HOST,serverPort)) #Faz a ligação no serverSocket a porta de
 serverSocket.listen(1) #O servidor fica escutando as possíveis conexões e o número indica o número máximo de conexões em fila. Neste caso 1.
 print ("Servidor Ativo!")
 
+def findColumnByID(target, idNumber):
+      print(dataBase[idNumber][target])
 
-def findByID(target,idNumber):
-      print(dataBase[idNumber])
 
+def findID(target,idNumber):
+      idNumber = int(idNumber)
+      if (int(idNumber)<=len(dataBase)-1): findColumnByID(target,int(idNumber))
+      else: print('abc')
 
 while True:
       connectionSocket, clientsocket = serverSocket.accept()
@@ -31,12 +35,12 @@ while True:
             operacao = connectionSocket.recv(1024)
             if not operacao: break
             idNumber = int(connectionSocket.recv(1024))
-            if not idNumber: break
+            
 
-            if idNumber=='Nome': 
-                  findByID('NAME', idNumber)
-            elif operacao=='CPF': 
-                  findByID('CPF', idNumber)
+            if str(operacao, 'utf-8')=='NAME': 
+                  findID('NAME', idNumber)
+            elif str(operacao, 'utf-8')=='CPF': 
+                  findID('CPF', idNumber)
 
             print(clientsocket, " enviou a mensagem: ", str(operacao, 'utf-8'))
             modifiedMessage = operacao.upper() #transforma a mensagem em caixa alta.
