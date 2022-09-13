@@ -24,7 +24,7 @@ def sendToServer(column, idNumber):  #Envia os valores passados como parâmetro 
       print(modifiedMessage)
 
 
-def consultaUser(): #Função responsável por adquirir os parâmetros que o usuário deseja consultar, garantir que eles estejam corretos e encerrar o programa 
+def userRequest(): #Função responsável por adquirir os parâmetros que o usuário deseja consultar, garantir que eles estejam corretos e encerrar o programa 
       finishProgram = input('\nDeseja encerrar o programa:')
       
       
@@ -38,11 +38,13 @@ def consultaUser(): #Função responsável por adquirir os parâmetros que o usu
 
             print(column, idNumber)
             sendToServer(column, idNumber)
+            finishProgram = input('\nDeseja encerrar o programa:')
+            while ((finishProgram!='Sim') and (finishProgram!='Nao')): finishProgram = input('Responda com Sim ou Nao:')
       return()
 
 
 
-consultaUser()
+userRequest()
 print('conexao encerrada')
 clientSocket.close()
 
