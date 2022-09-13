@@ -5,16 +5,14 @@ serverPort = 12000 #define a porta de acesso no servidor TCP.
 clientSocket =socket.socket(socket.AF_INET, socket.SOCK_STREAM) #AF_INET (para IPv4) - SOCK_STREAM (Indica conexão TCP)
 
 clientSocket.connect((HOST, serverPort)) #cria o objeto clientSocket. AF_INET => Constante que indica IPv4. | SOCK_STREAM => Constante que indica que é um Segmento TCP.
-print('Conectado ao servidor:', serverPort, ",\nPara encerrar digite: encerrar")
-operacao = input('Informe o dado a ser consultado: ')
-idNumber = input('Informe o número do ID a ser consultado: ')
+print('Conectado ao servidor:', serverPort)
 
-while ((operacao!= 'encerrar') and (idNumber!='encerrar')):
-      clientSocket.send(str.encode(operacao))
+
+#DECLARANDO FUNÇÕES###############################################################################################################
+def sendToServer(column, idNumber):  #Envia os valores passados como parâmetro para o servidor, recebe e exibe a resposta do mesmo
+      clientSocket.send(str.encode(column))
       #clientSocket.send(msg) #Cria o segmento TCP com os dados (variável message) e o cabeçalho com o número do servidor e da porta. A porta do cliente no TCP não é explícita, é determinada pelo S.O. 
       clientSocket.send(str.encode(idNumber))
-    
-    
       modifiedMessage = clientSocket.recv(1024) #Aguarda e recebe uma resposta do servidor
 
     
@@ -24,8 +22,28 @@ while ((operacao!= 'encerrar') and (idNumber!='encerrar')):
 
       print ("\nO nome/CPF do usuário de ID "+idNumber+' é:')
       print(modifiedMessage)
- 
-      operacao = input('Informe o dado a ser consultado: ')
-      idNumber = input('Informe o número do ID a ser consultado: ')
+
+
+def consultaUser(): #Função responsável por adquirir os parâmetros que o usuário deseja consultar, garantir que eles estejam corretos e encerrar o programa 
+      finishProgram = input('\nDeseja encerrar o programa:')
+      
+      
+      while ((finishProgram!='Sim') and (finishProgram!='Nao')): finishProgram = input('Responda com Sim ou Nao:')
+
+      while finishProgram=='Nao':
+            column = input('Qual coluna deseja consultar:')
+            while ((column!='NAME') and (column!='CPF')): column = input('Selecione uma coluna válida:')
+
+            idNumber = input('Para qual ID deseja realizar a consulta? \n Insira um valor inteiro:')
+
+            print(column, idNumber)
+            sendToServer(column, idNumber)
+      return()
+
+
+
+consultaUser()
 print('conexao encerrada')
 clientSocket.close()
+
+
