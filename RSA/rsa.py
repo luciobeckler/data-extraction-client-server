@@ -1,8 +1,3 @@
-
-
-from cmath import exp
-
-
 def dividers(div): #Encontra e retorna em um array todos os divisores do número fornecido por div#############################################################
       divArray=[]
       i=1
@@ -45,17 +40,15 @@ def descript(d,n,message):
       return descriptMessage
         
 
+def findParameters(p,q):
+      n = p*q
+      z = (p-1)*(q-1) 
+      e = findE(n)
+      d = findD(e,z)
+      return(n,z,e,d)
 
-p=17
-q=23
-n=p*q #35
-print('n=',n)
-z = (p-1)*(q-1) #24
-print('z=',z)
-e = findE(n) #2
-print('e=',e)
-d = findD(e,z) #12
-print('d=',d)
+n,z,e,d = findParameters(17,23)
+print(n,z,e,d)
 print('109 criptografado da:',cript(e,n,109))
 print('37 descriptografado da:', descript(d,n,37))
 
