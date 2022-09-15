@@ -32,7 +32,7 @@ def userRequest(): #Função responsável por adquirir os parâmetros que o usu�
 
       while finishProgram=='Nao':
             column = input('Qual coluna deseja consultar:')
-            while ((column!='NAME') and (column!='CPF')): column = input('Selecione uma coluna válida:')
+            while ((column!='NAME') and (column!='CPF')): column = input('Selecione uma coluna válida(NAME / CPF):')
 
             idNumber = input('Para qual ID deseja realizar a consulta? \n Insira um valor inteiro maior ou igual a 0:')
 

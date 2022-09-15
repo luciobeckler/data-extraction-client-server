@@ -9,6 +9,7 @@ dataBase = [{'ID':0 ,'NAME':'Ana','CPF':14485403678},
             {'ID':4 ,'NAME':'Arnaldo ','CPF':15144758698}]
 
 
+from operator import mod
 import socket
 HOST = '' 
 serverPort = 12000 #definição da porta do servidor. 
@@ -19,13 +20,20 @@ serverSocket.listen(1) #O servidor fica escutando as possíveis conexões e o n�
 print ("Servidor Ativo!")
 
 def findColumnByID(target, idNumber):
-      print(dataBase[idNumber][target])
+      return(dataBase[idNumber][target])
 
 
 def findID(target,idNumber):
       idNumber = int(idNumber)
-      if (int(idNumber)<=len(dataBase)-1): findColumnByID(target,int(idNumber))
-      else: print('abc')
+      if (int(idNumber)<=len(dataBase)-1): return(findColumnByID(target,int(idNumber)))
+      else:
+            modifiedMessage = 'ID invalido.'
+            connectionSocket.send(modifiedMessage.encode())
+
+            operacao = connectionSocket.recv(1024)
+            idNumber = connectionSocket.recv(1024)
+            findID(operacao,idNumber)
+
 
 while True:
       connectionSocket, clientsocket = serverSocket.accept()
@@ -34,17 +42,19 @@ while True:
       while True:
             operacao = connectionSocket.recv(1024)
             if not operacao: break
-            idNumber = int(connectionSocket.recv(1024))
+            idNumber = connectionSocket.recv(1024)
+            print(idNumber)
             
 
             if str(operacao, 'utf-8')=='NAME': 
-                  findID('NAME', idNumber)
+                  modifiedMessage =  findID('NAME', idNumber)
+                  print(clientsocket, " enviou uma requisição de consulta ", str(operacao, 'utf-8'), "no ID", str(idNumber, 'utf-8'))
+                  connectionSocket.send(modifiedMessage.encode())
             elif str(operacao, 'utf-8')=='CPF': 
-                  findID('CPF', idNumber)
+                  modifiedMessage = str(findID('CPF', idNumber))
+                  print(clientsocket, " enviou uma requisição de consulta ", str(operacao, 'utf-8'), "no ID", str(idNumber, 'utf-8'))
+                  connectionSocket.send(modifiedMessage.encode())
 
-            print(clientsocket, " enviou a mensagem: ", str(operacao, 'utf-8'))
-            modifiedMessage = operacao.upper() #transforma a mensagem em caixa alta.
-            connectionSocket.send(modifiedMessage)
       print("Conexão com o cliente ", clientsocket, " encerrada!")
       connectionSocket.close()
 
