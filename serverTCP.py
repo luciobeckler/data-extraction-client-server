@@ -19,20 +19,17 @@ serverSocket.bind((HOST,serverPort)) #Faz a ligação no serverSocket a porta de
 serverSocket.listen(1) #O servidor fica escutando as possíveis conexões e o número indica o número máximo de conexões em fila. Neste caso 1.
 print ("Servidor Ativo!")
 
-def findColumnByID(target, idNumber):
-      return(dataBase[idNumber][target])
+def phraseToASCII(phrase):  #ENTRADA: string qualquer  //  SAIDA: lista de caracteres codificados em ASCII
+      asciiCode = list(phrase) #Separa as letras da frase fornecida e armazena numa lista chamada words
+      for i in range (len(asciiCode)):
+            asciiCode[i] = ord(asciiCode[i]) #Converte os caracteres para seus respectivos códigos ASCII
+      return(asciiCode)
 
-
-def findID(target,idNumber):
-      idNumber = int(idNumber)
-      if (int(idNumber)<=len(dataBase)-1): return(findColumnByID(target,int(idNumber)))
-      else:
-            modifiedMessage = 'ID invalido.'
-            connectionSocket.send(modifiedMessage.encode())
-
-            operacao = connectionSocket.recv(1024)
-            idNumber = connectionSocket.recv(1024)
-            findID(operacao,idNumber)
+def ASCIItophrase(asciiCode):
+      phrase = asciiCode
+      for i in range (len(phrase)): #ENTRADA: lista de caracteres codificados em ASCII //  SAIDA: string qualquer
+            phrase[i]=chr(phrase[i]) #Converte os códigos ASCII para seus respectivos caracteres
+      return (" ".join(phrase)) #Junta as letras em uma única frase
 
 
 def dividers(div): #Encontra e retorna em um array todos os divisores do número fornecido por div#############################################################
@@ -68,29 +65,52 @@ def findD(e,z): #Encontra o valor de d em função de e e z#####################
             d+=1
       return d
 
-def cript(e, n, message):
-      criptMessage = (message**e)%n
+def cript(e, n, message): 
+      criptMessage = phraseToASCII(message)
+      for i in range (len(criptMessage)):
+            criptMessage[i] = (criptMessage[i]**e)%n
       return criptMessage
 
 def descript(d,n,message):
-      descriptMessage = message**d%n
+      descriptMessage = message
+      for i in range (len(descriptMessage)):
+            descriptMessage[i] = descriptMessage[i]**d%n
+      descriptMessage = ASCIItophrase(descriptMessage)
       return descriptMessage
-        
-def findParameters(p,q):
-      n=p*q
 
-p=17
-q=23
-n=p*q #35
-print('n=',n)
-z = (p-1)*(q-1) #24
-print('z=',z)
-e = findE(n) #2
-print('e=',e)
-d = findD(e,z) #12
-print('d=',d)
-print('109 criptografado da:',cript(e,n,109))
-print('37 descriptografado da:', descript(d,n,37))
+        
+
+def findParameters(p,q):
+      n = p*q
+      z = (p-1)*(q-1) 
+      e = findE(n)
+      d = findD(e,z)
+      return(n,z,e,d)
+
+def findColumnByID(target, idNumber):
+      return(dataBase[idNumber][target])
+
+
+def findID(target,idNumber):
+      idNumber = int(idNumber)
+      if (int(idNumber)<=len(dataBase)-1): return(findColumnByID(target,int(idNumber)))
+      else:
+            modifiedMessage = 'ID invalido.'
+            connectionSocket.send(modifiedMessage.encode())
+
+            operacao = connectionSocket.recv(1024)
+            idNumber = connectionSocket.recv(1024)
+            findID(operacao,idNumber)
+
+def sendPublicKeys(n,e): #Envia para o cliente as chaves públicas do servidor 
+      n = str(n)
+      e = str(e)
+      connectionSocket.send(n.encode())
+      connectionSocket.send(e.encode())
+
+nServer,zServer,eServer,dServer = findParameters(17,23)  #Encontra os parâmetros para a criptografia RSA
+
+
 
 
 while True:
