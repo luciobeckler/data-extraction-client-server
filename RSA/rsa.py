@@ -4,9 +4,9 @@ def phraseToASCII(phrase):  #ENTRADA: string qualquer  //  SAIDA: lista de carac
             asciiCode[i] = ord(asciiCode[i]) #Converte os caracteres para seus respectivos códigos ASCII
       return(asciiCode)
 
-def ASCIItophrase(asciiCode):
+def ASCIItophrase(asciiCode): #ENTRADA: lista de caracteres codificados em ASCII //  SAIDA: string qualquer
       phrase = asciiCode
-      for i in range (len(phrase)): #ENTRADA: lista de caracteres codificados em ASCII //  SAIDA: string qualquer
+      for i in range (len(phrase)): 
             phrase[i]=chr(phrase[i]) #Converte os códigos ASCII para seus respectivos caracteres
       return (" ".join(phrase)) #Junta as letras em uma única frase
 
@@ -44,13 +44,13 @@ def findD(e,z): #Encontra o valor de d em função de e e z#####################
             d+=1
       return d
 
-def cript(e, n, message): 
+def cript(e, n, message): #Recebe duas chaves públicas e uma string e retorna outra string contendo a mensagem criptografada#######################################
       criptMessage = phraseToASCII(message)
       for i in range (len(criptMessage)):
             criptMessage[i] = (criptMessage[i]**e)%n
-      return criptMessage
+      return (" ".join(map(str,criptMessage))) #Retorna a mensagem criptografada em forma de uma variável do tipo STR
 
-def descript(d,n,message):
+def descript(d,n,message): ##Recebe duas chaves privadas e uma string encriptada e retorna outra string contendo a mensagem descriptografada#######################################
       descriptMessage = message
       for i in range (len(descriptMessage)):
             descriptMessage[i] = descriptMessage[i]**d%n
@@ -68,8 +68,11 @@ def findParameters(p,q):
 
 n,z,e,d = findParameters(17,23)
 print(n,z,e,d)
-print('frase criptografado da:',cript(e,n,'A B D 432 574 909 *-+ .+'))
-print('ascii descriptografado da:', descript(d,n,[143, 315, 111, 315, 68, 315, 239, 102, 271, 315, 297, 200, 239, 315, 250, 330, 250, 315, 189, 22, 134, 315, 368, 134]))
+print('frase criptografado da:',cript(e,n,'NAME'))
+print('ascii descriptografado da:', descript(d,n,[269, 143, 236, 69]))
+print('NAME')
+
+print(type(cript(e,n,'NAME')))
 
 
 

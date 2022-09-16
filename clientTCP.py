@@ -6,9 +6,24 @@ clientSocket =socket.socket(socket.AF_INET, socket.SOCK_STREAM) #AF_INET (para I
 
 clientSocket.connect((HOST, serverPort)) #cria o objeto clientSocket. AF_INET => Constante que indica IPv4. | SOCK_STREAM => Constante que indica que é um Segmento TCP.
 print('Conectado ao servidor:', serverPort)
+nServer = clientSocket.recv(1024)
+eServer = clientSocket.recv(1024)
+print(nServer,eServer)
 
 
 #DECLARANDO FUNÇÕES###############################################################################################################
+def cript(e, n, message): 
+      criptMessage = phraseToASCII(message)
+      for i in range (len(criptMessage)):
+            criptMessage[i] = (criptMessage[i]**e)%n
+      return criptMessage
+
+def phraseToASCII(phrase):  #ENTRADA: string qualquer  //  SAIDA: lista de caracteres codificados em ASCII
+      asciiCode = list(phrase) #Separa as letras da frase fornecida e armazena numa lista chamada words
+      for i in range (len(asciiCode)):
+            asciiCode[i] = ord(asciiCode[i]) #Converte os caracteres para seus respectivos códigos ASCII
+      return(asciiCode)
+
 def sendToServer(column, idNumber):  #Envia os valores passados como parâmetro para o servidor, recebe e exibe a resposta do mesmo
       clientSocket.send(str.encode(column))
       #clientSocket.send(msg) #Cria o segmento TCP com os dados (variável message) e o cabeçalho com o número do servidor e da porta. A porta do cliente no TCP não é explícita, é determinada pelo S.O. 

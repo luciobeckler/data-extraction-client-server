@@ -1,24 +1,8 @@
 # -- coding: utf-8 --
-
-
-# -- Gerando os dados a serem consultados
-dataBase = [{'ID':0 ,'NAME':'Ana','CPF':14485403678},
-            {'ID':1,'NAME':'Jose','CPF':18885403678},
-            {'ID':2 ,'NAME':'Marcos','CPF':14485479625},
-            {'ID':3 ,'NAME':'Lucas ','CPF':14475458698},
-            {'ID':4 ,'NAME':'Arnaldo ','CPF':15144758698}]
-
-
 from operator import mod
 import socket
-HOST = '' 
-serverPort = 12000 #definição da porta do servidor. 
-serverSocket = socket.socket(socket.AF_INET, socket.SOCK_STREAM) #cria o objeto serverSocket. AF_INET => Constante que indica IPv4. | SOCK_STREAM => Constante que indica que é um Segmento TCP.
-serverSocket.bind((HOST,serverPort)) #Faz a ligação no serverSocket a porta designada.
 
-serverSocket.listen(1) #O servidor fica escutando as possíveis conexões e o número indica o número máximo de conexões em fila. Neste caso 1.
-print ("Servidor Ativo!")
-
+#DECLARANDO FUNÇÕES##################################################################################################################
 def phraseToASCII(phrase):  #ENTRADA: string qualquer  //  SAIDA: lista de caracteres codificados em ASCII
       asciiCode = list(phrase) #Separa as letras da frase fornecida e armazena numa lista chamada words
       for i in range (len(asciiCode)):
@@ -30,7 +14,6 @@ def ASCIItophrase(asciiCode):
       for i in range (len(phrase)): #ENTRADA: lista de caracteres codificados em ASCII //  SAIDA: string qualquer
             phrase[i]=chr(phrase[i]) #Converte os códigos ASCII para seus respectivos caracteres
       return (" ".join(phrase)) #Junta as letras em uma única frase
-
 
 def dividers(div): #Encontra e retorna em um array todos os divisores do número fornecido por div#############################################################
       divArray=[]
@@ -78,8 +61,6 @@ def descript(d,n,message):
       descriptMessage = ASCIItophrase(descriptMessage)
       return descriptMessage
 
-        
-
 def findParameters(p,q):
       n = p*q
       z = (p-1)*(q-1) 
@@ -89,7 +70,6 @@ def findParameters(p,q):
 
 def findColumnByID(target, idNumber):
       return(dataBase[idNumber][target])
-
 
 def findID(target,idNumber):
       idNumber = int(idNumber)
@@ -102,21 +82,35 @@ def findID(target,idNumber):
             idNumber = connectionSocket.recv(1024)
             findID(operacao,idNumber)
 
-def sendPublicKeys(n,e): #Envia para o cliente as chaves públicas do servidor 
+def sendPublicKeys(n,e): #Envia para o cliente as chaves públicas do servidor##################################################################################################################
       n = str(n)
       e = str(e)
       connectionSocket.send(n.encode())
       connectionSocket.send(e.encode())
 
+
+#CÓDIGO PRINCIPAL##################################################################################################################
+# -- Gerando os dados a serem consultados
+dataBase = [{'ID':0 ,'NAME':'Ana','CPF':14485403678},
+            {'ID':1,'NAME':'Jose','CPF':18885403678},
+            {'ID':2 ,'NAME':'Marcos','CPF':14485479625},
+            {'ID':3 ,'NAME':'Lucas ','CPF':14475458698},
+            {'ID':4 ,'NAME':'Arnaldo ','CPF':15144758698}]
+HOST = '' 
+serverPort = 12000 #definição da porta do servidor. 
+serverSocket = socket.socket(socket.AF_INET, socket.SOCK_STREAM) #cria o objeto serverSocket. AF_INET => Constante que indica IPv4. | SOCK_STREAM => Constante que indica que é um Segmento TCP.
+serverSocket.bind((HOST,serverPort)) #Faz a ligação no serverSocket a porta designada.
+
+serverSocket.listen(1) #O servidor fica escutando as possíveis conexões e o número indica o número máximo de conexões em fila. Neste caso 1.
+print ("Servidor Ativo!")
+
 nServer,zServer,eServer,dServer = findParameters(17,23)  #Encontra os parâmetros para a criptografia RSA
-
-
 
 
 while True:
       connectionSocket, clientsocket = serverSocket.accept()
       print("Conectado à: ", clientsocket)
-
+      sendPublicKeys(nServer,eServer)
       while True:
             operacao = connectionSocket.recv(1024)
             if not operacao: break
