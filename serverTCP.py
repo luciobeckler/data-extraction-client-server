@@ -3,17 +3,22 @@ from operator import mod
 import socket
 
 #DECLARANDO FUNÇÕES##################################################################################################################
+
+
+#FUNÇÕES PARA O FUNCIONAMENTO DO RSA####################################################################################################
+
 def phraseToASCII(phrase):  #ENTRADA: string qualquer  //  SAIDA: lista de caracteres codificados em ASCII
       asciiCode = list(phrase) #Separa as letras da frase fornecida e armazena numa lista chamada words
       for i in range (len(asciiCode)):
             asciiCode[i] = ord(asciiCode[i]) #Converte os caracteres para seus respectivos códigos ASCII
       return(asciiCode)
 
-def ASCIItophrase(asciiCode):
+def ASCIItophrase(asciiCode): #ENTRADA: lista de caracteres codificados em ASCII //  SAIDA: string qualquer
       phrase = asciiCode
-      for i in range (len(phrase)): #ENTRADA: lista de caracteres codificados em ASCII //  SAIDA: string qualquer
+      for i in range (len(phrase)): 
             phrase[i]=chr(phrase[i]) #Converte os códigos ASCII para seus respectivos caracteres
-      return (" ".join(phrase)) #Junta as letras em uma única frase
+      return ("".join(phrase)) #Junta as letras em uma única frase
+
 
 def dividers(div): #Encontra e retorna em um array todos os divisores do número fornecido por div#############################################################
       divArray=[]
@@ -48,15 +53,16 @@ def findD(e,z): #Encontra o valor de d em função de e e z#####################
             d+=1
       return d
 
-def cript(e, n, message): 
-      criptMessage = phraseToASCII(message)
+def cript(e, n, message): #Recebe duas chaves públicas e uma string e retorna outra string contendo a mensagem criptografada#######################################
+      criptMessage = phraseToASCII(str(message))
       for i in range (len(criptMessage)):
             criptMessage[i] = (criptMessage[i]**e)%n
-      return criptMessage
+      return (" ".join(map(str,criptMessage))) #Retorna a mensagem criptografada em forma de uma variável do tipo STR
 
-def descript(d,n,message):
-      descriptMessage = message
+def descript(d,n,message): ##Recebe duas chaves privadas e uma string encriptada e retorna outra string contendo a mensagem descriptografada#######################################
+      descriptMessage = message.split()
       for i in range (len(descriptMessage)):
+            descriptMessage[i] = int(descriptMessage[i])
             descriptMessage[i] = descriptMessage[i]**d%n
       descriptMessage = ASCIItophrase(descriptMessage)
       return descriptMessage
@@ -68,6 +74,8 @@ def findParameters(p,q):
       d = findD(e,z)
       return(n,z,e,d)
 
+
+#FUNÇÕES EXCLUSIVAS DO SERVIDOR##########################################################################################################
 def findColumnByID(target, idNumber):
       return(dataBase[idNumber][target])
 
@@ -111,21 +119,26 @@ while True:
       connectionSocket, clientsocket = serverSocket.accept()
       print("Conectado à: ", clientsocket)
       sendPublicKeys(nServer,eServer)
-      while True:
-            operacao = connectionSocket.recv(1024)
-            if not operacao: break
-            idNumber = connectionSocket.recv(1024)
-            print(idNumber)
-            
+      nClient = int(connectionSocket.recv(1024))
+      eClient = int(connectionSocket.recv(1024))
 
-            if str(operacao, 'utf-8')=='NAME': 
+      while True:
+            operacao = str(connectionSocket.recv(1024), 'utf-8')
+            operacao = descript(dServer,nServer,operacao)
+            if not operacao: break
+            idNumber = str(connectionSocket.recv(1024), 'utf-8')
+            idNumber = descript(dServer,nServer, idNumber)
+            
+            if operacao=='NAME': 
                   modifiedMessage =  findID('NAME', idNumber)
-                  print(clientsocket, " enviou uma requisição de consulta ", str(operacao, 'utf-8'), "no ID", str(idNumber, 'utf-8'))
+                  print(clientsocket, " enviou uma requisição de consulta ", operacao, "no ID", idNumber)
+                  modifiedMessage = cript(eClient,nClient, modifiedMessage)
                   connectionSocket.send(modifiedMessage.encode())
-            elif str(operacao, 'utf-8')=='CPF': 
-                  modifiedMessage = str(findID('CPF', idNumber))
-                  print(clientsocket, " enviou uma requisição de consulta ", str(operacao, 'utf-8'), "no ID", str(idNumber, 'utf-8'))
-                  connectionSocket.send(modifiedMessage.encode())
+            elif operacao=='CPF': 
+                  modifiedMessage = findID('CPF', idNumber)
+                  print(clientsocket, " enviou uma requisição de consulta ", operacao, "no ID", idNumber)
+                  modifiedMessage = cript(eClient,nClient, modifiedMessage)
+                  connectionSocket.send(str(modifiedMessage).encode())
 
       print("Conexão com o cliente ", clientsocket, " encerrada!")
       connectionSocket.close()
