@@ -100,7 +100,7 @@ def userRequest(): #Função responsável por adquirir os parâmetros que o usu�
             column = input('Qual coluna deseja consultar:')
             while ((column!='NAME') and (column!='CPF')): column = input('Selecione uma coluna válida(NAME / CPF):')
 
-            idNumber = input('Para qual ID deseja realizar a consulta? \n Insira um valor inteiro maior ou igual a 0:')
+            idNumber = input('Para qual ID deseja realizar a consulta? \n Insira um valor inteiro entre 0 e 4:')
 
             print(column, idNumber)
             sendToServer(column, idNumber)
@@ -121,9 +121,6 @@ nServer = int(clientSocket.recv(1024))
 eServer = int(clientSocket.recv(1024))
 
 nClient,zClient,eClient,dClient = findParameters(29,11)  #Encontra os parâmetros para a criptografia RSA
-print(nClient,zClient,eClient,dClient)
 userRequest()
 print('conexao encerrada')
 clientSocket.close()
-
-

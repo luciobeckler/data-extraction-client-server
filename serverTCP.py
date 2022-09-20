@@ -142,8 +142,3 @@ while True:
 
       print("Conexão com o cliente ", clientsocket, " encerrada!")
       connectionSocket.close()
-
-
-
-
-
